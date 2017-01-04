@@ -1,10 +1,14 @@
 
 var BALL_RADIUS=16.0;
 var BALL_MAX_VELOCITY=7.0;
-var ball_x=SCREEN_W/2;
+var ball_x=480;
 var ball_y=400.0;
 var ball_velocity_x=-3.0;
 var ball_velocity_y=0.0;
+
+var pong;
+var die;
+var win;
 
 var PADDLE_WIDTH=16;
 var PADDLE_HEIGHT=100;
@@ -140,6 +144,7 @@ function update(){
 		ball_velocity_x=-3;
 		ball_velocity_y=0;
 		human_score++;
+		play_sample(win,255,1000,0);
 	}
 	if(ball_x>=SCREEN_W-BALL_RADIUS){
 		ball_x=SCREEN_W/2;
@@ -147,6 +152,8 @@ function update(){
 		ball_velocity_x=3;
 		ball_velocity_y=0;
 		cpu_score++;
+		play_sample(die,255,1000,0);
+
 	}
 	
 	if(ball_y<=0)
@@ -165,6 +172,7 @@ function update(){
 		}
 		ball_velocity_x=Math.sqrt(Math.pow(BALL_MAX_VELOCITY, 2) - Math.pow(ball_velocity_y, 2));
 		ball_velocity_x=-ball_velocity_x;
+		play_sample(pong,255,1000,0);
 	}
 
 	if(collision(ball_x,ball_x+BALL_RADIUS,paddle_cpu_x,paddle_cpu_x+PADDLE_WIDTH,ball_y,ball_y+BALL_RADIUS,paddle_cpu_y,paddle_cpu_y+PADDLE_HEIGHT)){
@@ -176,6 +184,7 @@ function update(){
 			ball_velocity_y=-(BALL_MAX_VELOCITY*0.7);
 		}
 		ball_velocity_x=Math.sqrt(Math.pow(BALL_MAX_VELOCITY, 2) - Math.pow(ball_velocity_y, 2));
+		play_sample(pong,255,1000,0);
 
 	}
 	if(human_score>99)
@@ -191,7 +200,11 @@ function update(){
 
 
 function setup(){
+	pong = load_sample("audio/pong.wav");
+	die = load_sample("audio/die.wav");
+	win = load_sample("audio/win.wav");
 
+	
 	
 }
 
