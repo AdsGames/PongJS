@@ -112,16 +112,16 @@ var is_pointer_locked=false;
 /// @param menu If true, context menu will be available on right click on canvas. Default is false.
 function install_mouse(menu)
 {	
-	canvas.canvas.onclick = function() {
- 		canvas.canvas.requestPointerLock();
-		//document.addEventListener("mousemove", updatePosition, false);
-		is_pointer_locked=true;
+	// canvas.canvas.onclick = function() {
+ 	// 	canvas.canvas.requestPointerLock();
+	// 	//document.addEventListener("mousemove", updatePosition, false);
+	// 	is_pointer_locked=true;
 
 
-	}
+	// }
 
-	canvas.canvas.requestPointerLock = canvas.canvas.requestPointerLock ||
-             canvas.canvas.mozRequestPointerLock;
+	// canvas.canvas.requestPointerLock = canvas.canvas.requestPointerLock ||
+    //          canvas.canvas.mozRequestPointerLock;
 
 	if (!canvas)
 	{

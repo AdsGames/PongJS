@@ -1,9 +1,10 @@
 
-var BALL_RADIUS=16;
-var ball_x=600.0;
+var BALL_RADIUS=16.0;
+var BALL_MAX_VELOCITY=7.0;
+var ball_x=SCREEN_W/2;
 var ball_y=400.0;
-var ball_velocity_x=5.0;
-var ball_velocity_y=5.0;
+var ball_velocity_x=-3.0;
+var ball_velocity_y=0.0;
 
 var PADDLE_WIDTH=16;
 var PADDLE_HEIGHT=100;
@@ -11,11 +12,14 @@ var PADDLE_SPEED=4;
 var paddle_human_x=880;
 var paddle_human_y=200;
 
-var paddle_cpu_x=80+16;
+var paddle_cpu_x=80-16;
 var paddle_cpu_y=400;
 
 var game_state = 1;
 var cpu_player=true;
+
+var cpu_score=0;
+var human_score=0;
 
 // Collision between two given boxes
 function collision(xMin1, xMax1, xMin2, xMax2, yMin1, yMax1, yMin2, yMax2)
@@ -75,10 +79,16 @@ function draw(){
 	
 	if(game_state==1){
 		rectfill( canvas, 0, 0, SCREEN_W, SCREEN_H, makecol( 0, 0, 0));
+		
+		rectfill(canvas,(SCREEN_W/2)-1,0,(SCREEN_W/2)+1,SCREEN_H,makecol(255,255,255));
 
 		rectfill(canvas,ball_x,ball_y,ball_x+16,ball_y+16,makecol(255,255,255));
 		rectfill(canvas,paddle_human_x,paddle_human_y,paddle_human_x+PADDLE_WIDTH,paddle_human_y+PADDLE_HEIGHT,makecol(255,255,255));
 		rectfill(canvas,paddle_cpu_x,paddle_cpu_y,paddle_cpu_x+PADDLE_WIDTH,paddle_cpu_y+PADDLE_HEIGHT,makecol(255,255,255));
+
+		textout(canvas,font,cpu_score,(SCREEN_W/2)-60,50,40,makecol(255,255,255));
+		textout(canvas,font,human_score,(SCREEN_W/2)+20,50,40,makecol(255,255,255));
+
 
 	}
 
@@ -86,15 +96,18 @@ function draw(){
 
 function update(){	
 
+
+	
+
 	if(key[KEY_UP])
 		paddle_human_y-=PADDLE_SPEED;
 	if(key[KEY_DOWN])
 		paddle_human_y+=PADDLE_SPEED;
 	
 	if(cpu_player){
-		if(ball_y<paddle_cpu_y+50)
+		if(ball_y<paddle_cpu_y+20)
 			paddle_cpu_y-=PADDLE_SPEED;
-		if(ball_y>paddle_cpu_y+50)
+		if(ball_y>paddle_cpu_y+20)
 			paddle_cpu_y+=PADDLE_SPEED;
 	}
 	
@@ -102,6 +115,11 @@ function update(){
 		paddle_human_y=1;
 	if(paddle_human_y>SCREEN_H-PADDLE_HEIGHT-1)
 		paddle_human_y=SCREEN_H-PADDLE_HEIGHT-1;
+
+	if(paddle_cpu_y<1)
+		paddle_cpu_y=1;
+	if(paddle_cpu_y>SCREEN_H-PADDLE_HEIGHT-1)
+		paddle_cpu_y=SCREEN_H-PADDLE_HEIGHT-1;
 
 	//Mouse control code
 	// bind_mouse_to_window();
@@ -116,25 +134,54 @@ function update(){
 	ball_y+=ball_velocity_y;
 
 
-	if(ball_x<=0)
-		ball_velocity_x=-ball_velocity_x;
+	if(ball_x<=0){
+		ball_x=SCREEN_W/2;
+		ball_y=SCREEN_H/2;
+		ball_velocity_x=-3;
+		ball_velocity_y=0;
+		human_score++;
+	}
+	if(ball_x>=SCREEN_W-BALL_RADIUS){
+		ball_x=SCREEN_W/2;
+		ball_y=SCREEN_H/2;
+		ball_velocity_x=3;
+		ball_velocity_y=0;
+		cpu_score++;
+	}
+	
 	if(ball_y<=0)
 		ball_velocity_y=-ball_velocity_y;
-	
-	if(ball_x>=SCREEN_W-BALL_RADIUS)
-		ball_velocity_x=-ball_velocity_x;
+
 	if(ball_y>=SCREEN_H-BALL_RADIUS)
 		ball_velocity_y=-ball_velocity_y;
 	
 	if(collision(ball_x,ball_x+BALL_RADIUS,paddle_human_x,paddle_human_x+PADDLE_WIDTH,ball_y,ball_y+BALL_RADIUS,paddle_human_y,paddle_human_y+PADDLE_HEIGHT)){
-		ball_velocity_y=-(((PADDLE_HEIGHT/2)+(paddle_human_y-ball_y))/10);
+		ball_velocity_y=-(((PADDLE_HEIGHT/2)+(paddle_human_y-ball_y))/5);
+		if(ball_velocity_y>(BALL_MAX_VELOCITY*0.7)){
+			ball_velocity_y=(BALL_MAX_VELOCITY*0.7);
+		}
+		if(ball_velocity_y<-(BALL_MAX_VELOCITY*0.7)){
+			ball_velocity_y=-(BALL_MAX_VELOCITY*0.7);
+		}
+		ball_velocity_x=Math.sqrt(Math.pow(BALL_MAX_VELOCITY, 2) - Math.pow(ball_velocity_y, 2));
 		ball_velocity_x=-ball_velocity_x;
 	}
 
 	if(collision(ball_x,ball_x+BALL_RADIUS,paddle_cpu_x,paddle_cpu_x+PADDLE_WIDTH,ball_y,ball_y+BALL_RADIUS,paddle_cpu_y,paddle_cpu_y+PADDLE_HEIGHT)){
-		ball_velocity_y=-(((PADDLE_HEIGHT/2)+(paddle_cpu_y-ball_y))/10);
-		ball_velocity_x=-ball_velocity_x;
+		ball_velocity_y=-(((PADDLE_HEIGHT/2)+(paddle_cpu_y-ball_y))/5);
+		if(ball_velocity_y>(BALL_MAX_VELOCITY*0.7)){
+			ball_velocity_y=(BALL_MAX_VELOCITY*0.7);
+		}
+		if(ball_velocity_y<-(BALL_MAX_VELOCITY*0.7)){
+			ball_velocity_y=-(BALL_MAX_VELOCITY*0.7);
+		}
+		ball_velocity_x=Math.sqrt(Math.pow(BALL_MAX_VELOCITY, 2) - Math.pow(ball_velocity_y, 2));
+
 	}
+	if(human_score>99)
+		human_score=99;
+	if(cpu_score>99)
+		cpu_score=99;
 	
 	
 	
