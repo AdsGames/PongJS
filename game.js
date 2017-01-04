@@ -1,6 +1,6 @@
 
 var BALL_RADIUS=16.0;
-var BALL_MAX_VELOCITY=7.0;
+var ball_max_velocity=7.0;
 var ball_x=480;
 var ball_y=400.0;
 var ball_velocity_x=-3.0;
@@ -15,7 +15,6 @@ var PADDLE_HEIGHT=100;
 var PADDLE_SPEED=4;
 var paddle_human_x=880;
 var paddle_human_y=200;
-
 
 var paddle_cpu_x=80-16;
 var paddle_cpu_y=400;
@@ -45,41 +44,6 @@ function bind_mouse_to_window(){
 		mouse_y=SCREEN_H;
 }
 
-// Checks if the given box has been left clicked
-function location_clicked(min_x,max_x,min_y,max_y){
-    if(mouse_x>min_x && mouse_x<max_x && mouse_y>min_y && mouse_y<max_y && (mouse_b & 1 || mouse_b & 2)){
-        return true;
-	}else{
-		return false;
-	}
-}
-
-// Checks if the given box has been right clicked
-function location_right_clicked(min_x,max_x,min_y,max_y){
-    if(mouse_x>min_x && mouse_x<max_x && mouse_y>min_y && mouse_y<max_y && mouse_b & 4){
-        return true;
-	}else{
-		return false;
-	}
-}
-
-// Finds distance between two given points
-function distance_to_object(x_1,y_1,x_2,y_2){
-    return sqrt((pow(x_1-x_2,2))+(pow(y_1-y_2,2)));
-
-}
-
-// Finds angle of point 2 relative to point 1
-function find_angle(x_1,  y_1, x_2, y_2){
-    var tan_1 = 0.0;
-    var tan_2 = 0.0;
-    tan_1=y_1-y_2;
-    tan_2=x_1-x_2;
-
-    return Math.atan2(tan_2,tan_1);
-}
-
-
 function draw(){	
 	
 	if(game_state==1){
@@ -93,7 +57,6 @@ function draw(){
 
 		textout(canvas,font,cpu_score,(SCREEN_W/2)-60,50,40,makecol(255,255,255));
 		textout(canvas,font,human_score,(SCREEN_W/2)+20,50,40,makecol(255,255,255));
-
 
 	}
 	if(game_state==0){
@@ -111,18 +74,28 @@ function draw(){
 
 		textout(canvas,font,"W/S for",50,400,30,makecol(255,255,255));
 		textout(canvas,font,"player 1",50,440,30,makecol(255,255,255));
-
-
-
-
-
 	}
+}
 
+function restart_game(isPlayerPoint){
 
+	ball_x=SCREEN_W/2;
+	ball_y=SCREEN_H/2;
+	ball_velocity_y=0;
+	ball_max_velocity=7;
+
+	if(isPlayerPoint){
+		ball_velocity_x=-3;
+		human_score++;
+		play_sample(win,255,1000,0);
+	}else{
+		ball_velocity_x=3;
+		cpu_score++;
+		play_sample(die,255,1000,0);
+	}
 }
 
 function update(){	
-
 
 	if(game_state==1){
 
@@ -152,38 +125,16 @@ function update(){
 			paddle_cpu_y=1;
 		if(paddle_cpu_y>SCREEN_H-PADDLE_HEIGHT-1)
 			paddle_cpu_y=SCREEN_H-PADDLE_HEIGHT-1;
-
-		//Mouse control code
-		// bind_mouse_to_window();
-		// paddle_human_y=mouse_y;
-
-		// if(mouse_y>SCREEN_H-101)
-		// 	paddle_human_y=SCREEN_H-101;
-		// if(mouse_y<1)
-		// 	paddle_human_y=1;
 		
 		ball_x+=ball_velocity_x;
 		ball_y+=ball_velocity_y;
 
-
-		if(ball_x<=0){
-			ball_x=SCREEN_W/2;
-			ball_y=SCREEN_H/2;
-			ball_velocity_x=-3;
-			ball_velocity_y=0;
-			human_score++;
-			play_sample(win,255,1000,0);
-		}
-		if(ball_x>=SCREEN_W-BALL_RADIUS){
-			ball_x=SCREEN_W/2;
-			ball_y=SCREEN_H/2;
-			ball_velocity_x=3;
-			ball_velocity_y=0;
-			cpu_score++;
-			play_sample(die,255,1000,0);
-
-		}
+		if(ball_x<=0)
+			restart_game(true);
+		if(ball_x>=SCREEN_W-BALL_RADIUS)
+			restart_game(false);
 		
+
 		if(ball_y<=0)
 			ball_velocity_y=-ball_velocity_y;
 
@@ -192,27 +143,35 @@ function update(){
 		
 		if(collision(ball_x,ball_x+BALL_RADIUS,paddle_human_x,paddle_human_x+PADDLE_WIDTH,ball_y,ball_y+BALL_RADIUS,paddle_human_y,paddle_human_y+PADDLE_HEIGHT)){
 			ball_velocity_y=-(((PADDLE_HEIGHT/2)+(paddle_human_y-ball_y))/5);
-			if(ball_velocity_y>(BALL_MAX_VELOCITY*0.7)){
-				ball_velocity_y=(BALL_MAX_VELOCITY*0.7);
+			if(ball_velocity_y>(ball_max_velocity*0.7)){
+				ball_velocity_y=(ball_max_velocity*0.7);
 			}
-			if(ball_velocity_y<-(BALL_MAX_VELOCITY*0.7)){
-				ball_velocity_y=-(BALL_MAX_VELOCITY*0.7);
+			if(ball_velocity_y<-(ball_max_velocity*0.7)){
+				ball_velocity_y=-(ball_max_velocity*0.7);
 			}
-			ball_velocity_x=Math.sqrt(Math.pow(BALL_MAX_VELOCITY, 2) - Math.pow(ball_velocity_y, 2));
-			ball_velocity_x=-ball_velocity_x;
+			ball_velocity_x=Math.sqrt(Math.pow(ball_max_velocity, 2) - Math.pow(ball_velocity_y, 2));
+			
+			
+			if(!cpu_player)
+				ball_max_velocity+=0.5;
+			
 			play_sample(pong,255,1000,0);
+			
+			ball_velocity_x=-ball_velocity_x;
 		}
 
 		if(collision(ball_x,ball_x+BALL_RADIUS,paddle_cpu_x,paddle_cpu_x+PADDLE_WIDTH,ball_y,ball_y+BALL_RADIUS,paddle_cpu_y,paddle_cpu_y+PADDLE_HEIGHT)){
 			ball_velocity_y=-(((PADDLE_HEIGHT/2)+(paddle_cpu_y-ball_y))/5);
-			if(ball_velocity_y>(BALL_MAX_VELOCITY*0.7)){
-				ball_velocity_y=(BALL_MAX_VELOCITY*0.7);
+			if(ball_velocity_y>(ball_max_velocity*0.7)){
+				ball_velocity_y=(ball_max_velocity*0.7);
 			}
-			if(ball_velocity_y<-(BALL_MAX_VELOCITY*0.7)){
-				ball_velocity_y=-(BALL_MAX_VELOCITY*0.7);
+			if(ball_velocity_y<-(ball_max_velocity*0.7)){
+				ball_velocity_y=-(ball_max_velocity*0.7);
 			}
-			ball_velocity_x=Math.sqrt(Math.pow(BALL_MAX_VELOCITY, 2) - Math.pow(ball_velocity_y, 2));
+			ball_velocity_x=Math.sqrt(Math.pow(ball_max_velocity, 2) - Math.pow(ball_velocity_y, 2));
 			play_sample(pong,255,1000,0);
+			if(!cpu_player)
+				ball_max_velocity+=0.5;
 
 		}
 		if(human_score>99)
@@ -229,16 +188,16 @@ function update(){
 			cpu_player=false;
 		}
 	}
-	
-	
-
 }
 
-
 function setup(){
-	pong = load_sample("audio/pong.wav");
-	die = load_sample("audio/die.wav");
-	win = load_sample("audio/win.wav");
+	// pong = load_sample("files/pong/audio/pong.wav");
+	// die = load_sample("files/pong/audio/die.wav");
+	// win = load_sample("files/pong/audio/win.wav");
+
+	pong = load_sample("files/pong/audio/pong.wav");
+	die = load_sample("files/pong/audio/die.wav");
+	win = load_sample("files/pong/audio/win.wav");
 
 	
 	
