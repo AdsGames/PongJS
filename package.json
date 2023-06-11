@@ -1,0 +1,21 @@
+{
+  "name": "pong-js",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "repository": "ssh://git@github.com/adsgames/pongjs",
+  "author": "Danny Van Stemp",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
+    "format": "prettier -w .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "prettier": "^2.8.8",
+    "vite": "^4.0.4",
+    "vite-plugin-static-copy": "^0.16.0"
+  }
+}
