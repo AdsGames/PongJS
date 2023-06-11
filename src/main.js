@@ -60,23 +60,107 @@ function collision(xMin1, xMax1, xMin2, xMax2, yMin1, yMax1, yMin2, yMax2) {
 
 function draw() {
   if (game_state === 1) {
-    rectfill(canvas, SCREEN_W / 2 - 1, 0, SCREEN_W / 2 + 1, SCREEN_H, makecol(255, 255, 255));
+    rectfill(
+      canvas,
+      SCREEN_W / 2 - 1,
+      0,
+      SCREEN_W / 2 + 1,
+      SCREEN_H,
+      makecol(255, 255, 255)
+    );
 
-    rectfill(canvas, ball_x, ball_y, ball_x + 16, ball_y + 16, makecol(255, 255, 255));
-    rectfill(canvas, paddle_human_x, paddle_human_y, paddle_human_x + PADDLE_WIDTH, paddle_human_y + PADDLE_HEIGHT, makecol(255, 255, 255));
-    rectfill(canvas, paddle_cpu_x, paddle_cpu_y, paddle_cpu_x + PADDLE_WIDTH, paddle_cpu_y + PADDLE_HEIGHT, makecol(255, 255, 255));
+    rectfill(
+      canvas,
+      ball_x,
+      ball_y,
+      ball_x + 16,
+      ball_y + 16,
+      makecol(255, 255, 255)
+    );
+    rectfill(
+      canvas,
+      paddle_human_x,
+      paddle_human_y,
+      paddle_human_x + PADDLE_WIDTH,
+      paddle_human_y + PADDLE_HEIGHT,
+      makecol(255, 255, 255)
+    );
+    rectfill(
+      canvas,
+      paddle_cpu_x,
+      paddle_cpu_y,
+      paddle_cpu_x + PADDLE_WIDTH,
+      paddle_cpu_y + PADDLE_HEIGHT,
+      makecol(255, 255, 255)
+    );
 
-    textout(canvas, font, cpu_score, SCREEN_W / 2 - 60, 50, 40, makecol(255, 255, 255));
-    textout(canvas, font, human_score, SCREEN_W / 2 + 20, 50, 40, makecol(255, 255, 255));
+    textout(
+      canvas,
+      font,
+      cpu_score,
+      SCREEN_W / 2 - 60,
+      50,
+      40,
+      makecol(255, 255, 255)
+    );
+    textout(
+      canvas,
+      font,
+      human_score,
+      SCREEN_W / 2 + 20,
+      50,
+      40,
+      makecol(255, 255, 255)
+    );
   }
   if (game_state === 0) {
-    textout(canvas, font, "PONG", SCREEN_W / 2 - 90, 100, 80, makecol(255, 255, 255));
+    textout(
+      canvas,
+      font,
+      "PONG",
+      SCREEN_W / 2 - 90,
+      100,
+      80,
+      makecol(255, 255, 255)
+    );
 
-    textout(canvas, font, "Press 1 for singleplayer", SCREEN_W / 2 - 140, 600, 20, makecol(255, 255, 255));
-    textout(canvas, font, "Press 2 for multiplayer", SCREEN_W / 2 - 135, 630, 20, makecol(255, 255, 255));
+    textout(
+      canvas,
+      font,
+      "Press 1 for singleplayer",
+      SCREEN_W / 2 - 140,
+      600,
+      20,
+      makecol(255, 255, 255)
+    );
+    textout(
+      canvas,
+      font,
+      "Press 2 for multiplayer",
+      SCREEN_W / 2 - 135,
+      630,
+      20,
+      makecol(255, 255, 255)
+    );
 
-    textout(canvas, font, "2017 ADS Games", 10, 700, 10, makecol(255, 255, 255));
-    textout(canvas, font, "Danny Van Stemp", 10, 712, 10, makecol(255, 255, 255));
+    textout(
+      canvas,
+      font,
+      "2017 ADS Games",
+      10,
+      700,
+      10,
+      makecol(255, 255, 255)
+    );
+    textout(
+      canvas,
+      font,
+      "Danny Van Stemp",
+      10,
+      712,
+      10,
+      makecol(255, 255, 255)
+    );
 
     textout(canvas, font, "UP/DOWN for", 700, 400, 30, makecol(255, 255, 255));
     textout(canvas, font, "player 1", 700, 440, 30, makecol(255, 255, 255));
@@ -117,10 +201,12 @@ function update() {
     }
 
     if (paddle_human_y < 1) paddle_human_y = 1;
-    if (paddle_human_y > SCREEN_H - PADDLE_HEIGHT - 1) paddle_human_y = SCREEN_H - PADDLE_HEIGHT - 1;
+    if (paddle_human_y > SCREEN_H - PADDLE_HEIGHT - 1)
+      paddle_human_y = SCREEN_H - PADDLE_HEIGHT - 1;
 
     if (paddle_cpu_y < 1) paddle_cpu_y = 1;
-    if (paddle_cpu_y > SCREEN_H - PADDLE_HEIGHT - 1) paddle_cpu_y = SCREEN_H - PADDLE_HEIGHT - 1;
+    if (paddle_cpu_y > SCREEN_H - PADDLE_HEIGHT - 1)
+      paddle_cpu_y = SCREEN_H - PADDLE_HEIGHT - 1;
 
     ball_x += ball_velocity_x;
     ball_y += ball_velocity_y;
@@ -151,7 +237,9 @@ function update() {
       if (ball_velocity_y < -(ball_max_velocity * 0.7)) {
         ball_velocity_y = -(ball_max_velocity * 0.7);
       }
-      ball_velocity_x = Math.sqrt(Math.pow(ball_max_velocity, 2) - Math.pow(ball_velocity_y, 2));
+      ball_velocity_x = Math.sqrt(
+        Math.pow(ball_max_velocity, 2) - Math.pow(ball_velocity_y, 2)
+      );
 
       if (!cpu_player) ball_max_velocity += 0.5;
 
@@ -179,7 +267,9 @@ function update() {
       if (ball_velocity_y < -(ball_max_velocity * 0.7)) {
         ball_velocity_y = -(ball_max_velocity * 0.7);
       }
-      ball_velocity_x = Math.sqrt(Math.pow(ball_max_velocity, 2) - Math.pow(ball_velocity_y, 2));
+      ball_velocity_x = Math.sqrt(
+        Math.pow(ball_max_velocity, 2) - Math.pow(ball_velocity_y, 2)
+      );
       play_sample(pong, 255, 1000, 0);
       if (!cpu_player) ball_max_velocity += 0.5;
     }
